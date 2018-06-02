@@ -7,6 +7,7 @@ Vue.component("temp_ticket", {
             showing: true,
             overlay: false,
             refferal: "",
+            camp: ""
         };
     },
     methods:{
@@ -16,7 +17,7 @@ Vue.component("temp_ticket", {
         },
         refer: function(){
             this.overlay = false;
-            api.send("/temp/referral?code="+this.refferal,
+            api.send("/temp/referral?code="+this.refferal+"&camp="+this.camp,
                 obj => {
                     alert("referral code submitted");
                     window.location.reload();
