@@ -58,7 +58,7 @@ var api = {
 };
 
 (function(){
-    if(window.location.host.startsWith("localhost")){
-        api.base = "//localhost:8080"; 
+    if(!window.location.host.startsWith("dateideassg.com")){
+        api.base = "//"+window.location.host.split(':')[0]+":8080"; 
     }
 })();

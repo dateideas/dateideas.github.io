@@ -22,7 +22,7 @@ const v_redirect_landing = {
 
 const v_redirect_login = {
     template: "<div></div>",
-    created:function(){
+    created:function(){ 
         auth0_login();
     }
 };

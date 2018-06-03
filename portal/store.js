@@ -2,7 +2,7 @@ function canLocalStorage(){
     try{
         window.localStorage.setItem("","");
         return true;
-    }catch{
+    }catch(e){
         return false;
     } 
 }
