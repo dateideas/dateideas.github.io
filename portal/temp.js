@@ -26,6 +26,10 @@ Vue.component("temp_ticket", {
                     alert("unable to submit referral code");
                 }
             );
+        },
+        reset() {
+            this.overlay = false;
+            this.info = false;
         }
     },
     created: function(){
