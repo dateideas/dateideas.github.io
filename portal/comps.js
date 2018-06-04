@@ -103,6 +103,7 @@ const v_User = {
                         alert(msg);
                     }else{
                         alert("all done :)");
+                        window.location.reload();
                         comp.sms = 0; 
                     }
 
