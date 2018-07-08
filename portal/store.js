@@ -4,7 +4,7 @@ function canLocalStorage(){
         return true;
     }catch(e){
         return false;
-    } 
+    }
 }
 
 const store_user = {
@@ -16,24 +16,24 @@ const store_user = {
         verified: false
     },
     mutations:{
-        setUser: function(state, obj){ 
+        setUser: function(state, obj){
             state.user = obj.user_id;
             state.name = obj.name;
             state.dpic = obj.picture_large;
             state._tkn = obj._tkn;
-            
+
             gtag("set", {"user_id": obj.user_id});
         },
         setVerified: function(state, vstate){
             state.verified = vstate;
         }
     },
-    actions:{        
+    actions:{
         updateUser: function(store, obj){
             if(canLocalStorage()){
                 var ls = window.localStorage;
 
-                if(obj.user_id){ 
+                if(obj.user_id){
                     ls.setItem("user_id", obj.user_id);
                     ls.setItem("name", obj.name);
                     ls.setItem("picture_large", obj.picture_large);
@@ -42,10 +42,10 @@ const store_user = {
                     ls.removeItem("user_id");
                     ls.removeItem("name");
                     ls.removeItem("picture_large");
-                    ls.removeItem("_tkn"); 
+                    ls.removeItem("_tkn");
                 }
             }
- 
+
             store.commit("setUser", obj);
         },
         clearUser: function(store){
@@ -141,14 +141,13 @@ const store = new Vuex.Store({
             store.dispatch("getSaves");
 
             api.getList(function(data){
-                console.log(data);
                 if(data.ok){
                     store.commit("setList", data.latest);
                     store.commit("setPages", data.pages);
                     store.commit("setFeatured", data.featured);
                 }else if(data.code=="403 Forbidden"){
                     // redirect to user for sms verification
-                    router.push("/user"); 
+                    router.push("/user");
                 }
             });
         },
@@ -157,7 +156,7 @@ const store = new Vuex.Store({
                 var ids = [];
 
                 for(i in data.pages){
-                   ids.push(data.pages[i].id); 
+                   ids.push(data.pages[i].id);
                 }
                 store.commit("setPages", data.pages);
                 store.commit("setSaves", ids);
@@ -166,7 +165,7 @@ const store = new Vuex.Store({
         unsavePage: function(store, pageid){
             // lazy loading... local first
             store.commit("setSave", [pageid, false]);
-            api.setUnsave(pageid); 
+            api.setUnsave(pageid);
         },
         savePage: function(store, pageid){
             store.commit("setSave", [pageid, true]);
@@ -180,3 +179,4 @@ const store = new Vuex.Store({
         store.dispatch("updateUser", window.localStorage);
     }
 })();
+

@@ -14,20 +14,19 @@ Vue.component("v_display_card", {
         loggedIn: function(){ return this.$store.getters.loggedIn; }
     },
     methods:{
-        save: function(evt){ 
-            this.$store.dispatch("savePage", this.id); 
+        save: function(evt){
+            this.$store.dispatch("savePage", this.id);
             evt.stopPropagation();
         },
-        unsave: function(evt){ 
-            this.$store.dispatch("unsavePage", this.id); 
+        unsave: function(evt){
+            this.$store.dispatch("unsavePage", this.id);
             evt.stopPropagation();
         },
         visitPage: function(){
-           console.log("asdf");
             if(this.loggedIn){ router.push("/page/"+this.id); }
         }
     },
-    created: function(){ this.$store.dispatch("getPage", this.id); } 
+    created: function(){ this.$store.dispatch("getPage", this.id); }
 });
 
 Vue.component("v_loader", {
@@ -71,46 +70,46 @@ const v_User = {
     methods:{
         sendSmsPhone: function(){
             var msg = "Please insert a valid number";
-            
+
             if(parseInt(this.sms_phone)<80000000){
                 alert(msg);
             }else{
                 var comp = this;
                 this.loading = true;
 
-                api.smsPhone(this.sms_phone, function(data){ 
+                api.smsPhone(this.sms_phone, function(data){
                     if(!data.ok){
                         alert(data.error);
                     }else{
-                        comp.sms = 2; 
+                        comp.sms = 2;
                     }
 
                     comp.loading = false;
                 });
             }
-        }, 
+        },
         sendSmsCode: function(){
             var msg = "6 digit code required";
-            
+
             if(parseInt(this.sms_code)>1000000){
                 alert(data.error);
             }else{
                 var comp = this;
                 this.loading = true;
 
-                api.smsCode(this.sms_code, function(data){ 
+                api.smsCode(this.sms_code, function(data){
                     if(!data.ok){
                         alert(msg);
                     }else{
                         alert("all done :)");
                         window.location.reload();
-                        comp.sms = 0; 
+                        comp.sms = 0;
                     }
 
                     comp.loading = false;
                 });
             }
-        } 
+        }
     }
 };
 
@@ -130,12 +129,12 @@ const v_Page = {
             }
         },
         loadReviews: function(){
-            loadDisqus(this.id); 
+            loadDisqus(this.id);
             this.content = 1;
         }
     },
-    created: function(){ 
-        this.$store.dispatch("getPage", this.id); 
+    created: function(){
+        this.$store.dispatch("getPage", this.id);
     }
 };
 
@@ -157,7 +156,7 @@ const v_Featured = {
     },
     methods:{
         visitPage:function(){
-            var id = this.$store.state.featured[this.id]; 
+            var id = this.$store.state.featured[this.id];
             router.push("/featured/"+id);
         }
     }
@@ -205,3 +204,4 @@ const v_Wrapper = {
         return { menu:0 };
     }
 };
+

@@ -1,12 +1,12 @@
 var api = {
     base: "//dateideas.herokuapp.com",
     send: function(api, func, handle_err){
-        var xhr = new XMLHttpRequest(); 
-        xhr.open("GET", this.base+api); 
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", this.base+api);
         xhr.setRequestHeader("Authorization", "Bearer "+store.state.user._tkn);
-    
+
         xhr.onerror = function(){
-            if(!handle_err){ 
+            if(!handle_err){
                 alert("Something went wrong, logging you out to try again.");
                 return auth0_logout();
             }
@@ -16,19 +16,19 @@ var api = {
         xhr.onreadystatechange = function(){
             if(xhr.readyState==4){
                 var obj = JSON.parse(this.response);
-                if(!obj.ok){ 
+                if(!obj.ok){
                     if(!handle_err){ console.log(obj); }
                     else{ handle_err(obj); }
                 }else{
                     func(obj);
                 }
-                
+
                 store.commit("setLoading", false);
-            } 
+            }
         };
         xhr.send();
     },
-    
+
     getPage: function(id, func){ this.send("/content?id="+id, func); },
     getPreview: function(func){ this.send("/preview", func); },
     getList: function(func){ this.send("/list", func, func); },
@@ -59,6 +59,7 @@ var api = {
 
 (function(){
     if(!window.location.host.startsWith("dateideassg.com")){
-        api.base = "//"+window.location.host.split(':')[0]+":8080"; 
+        // api.base = "//"+window.location.host.split(':')[0]+":8080";
     }
 })();
+

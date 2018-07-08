@@ -9,7 +9,7 @@ var webAuth = new auth0.WebAuth({
 });
 
 function auth0_login(){
-    webAuth.authorize();
+    setTimeout(() => webAuth.authorize(), 500);
 }
 
 function auth0_logout(){
@@ -28,10 +28,10 @@ function auth0_handle(){
             webAuth.client.userInfo(authRes.accessToken, function(err, prof){
                 var authManagement = new auth0.Management({
                     domain: "ongspxm.auth0.com",
-                    token: authRes.idToken 
+                    token: authRes.idToken
                 });
-                
-                authManagement.getUser(prof.sub, function(err, user){ 
+
+                authManagement.getUser(prof.sub, function(err, user){
                     user["_tkn"] = authRes.idToken;
                     store.dispatch("updateUser", user);
                     gtag("event", "login");
@@ -39,20 +39,9 @@ function auth0_handle(){
                     router.push("/");
                 });
             });
-        }  
+        }
     });
 }
-
-/** Gtags **/
-function gtag(){ 
-    dataLayer.push(arguments); 
-}
-
-(function(){
-    window.dataLayer = window.dataLayer || [];
-    gtag("js", new Date());
-    gtag("config", "UA-93698015-1", {"send_page_view": false});
-})();
 
 /** Disqus Comment System **/
 var disqus_config=function(){};
@@ -60,9 +49,10 @@ function loadDisqus(page_id){
     disqus_config = function(){
         this.page.identifier = page_id;
     };
-    
+
     var d = document, s = d.createElement("script");
     s.src = "//dateideassg.disqus.com/embed.js";
     s.setAttribute("date-timestamp", +new Date());
     (d.head || d.body).appendChild(s);
 }
+

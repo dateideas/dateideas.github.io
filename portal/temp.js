@@ -4,7 +4,7 @@ Vue.component("temp_ticket", {
         return {
             code: "loading...",
             points: "loading...",
-            showing: true,
+            showing: false,
             overlay: false,
             refferal: "",
             camp: ""
@@ -45,3 +45,4 @@ Vue.component("temp_ticket", {
         });
     }
 });
+
