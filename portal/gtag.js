@@ -1,9 +1,9 @@
 const gtagObj = {};
-const fbUrl = "https://firestore.googleapis.com/v1beta1/projects/dateideaslogging/databases/(default)/documents/logs";
+const fbUrl = "https://dateideaslogging.firebaseio.com/events.json";
 
 function gtag(){
   const args = arguments;
-  dataLayer.push(args);
+  // dataLayer.push(args);
 
   function setData(data){
     Object.keys(data).forEach((key) => {
@@ -18,15 +18,9 @@ function gtag(){
     xhr.open("POST", fbUrl);
     xhr.send(JSON.stringify({
       fields:{
-        link: {
-          stringValue: link
-        },
-        user_id: {
-          stringValue: gtagObj.user_id || ''
-        },
-        tstamp: {
-          timestampValue: (new Date()).toISOString()
-        }
+        link: link,
+        user_id: gtagObj.user_id || '',
+        tstamp: (new Date()).toISOString()
       }
     }));
   }
@@ -37,7 +31,14 @@ function gtag(){
     if(args[1]==="page_view"){
       sendReq(gtagObj.page_path);
     }else{
-      sendReq(`/evt/${args[2]}`);
+      const obj = args[2] || {};
+      let data = '';
+
+      Object.keys(obj).forEach(function(key){
+        data += `${key}=${obj[key]}`;
+      });
+
+      sendReq(`/evt/${args[1]}?${data}`);
     }
   }
 }
