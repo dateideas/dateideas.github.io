@@ -22,7 +22,7 @@ const v_redirect_landing = {
 
 const v_redirect_login = {
     template: "<div></div>",
-    created:function(){
+    created:function(){ 
         auth0_login();
     }
 };
@@ -31,30 +31,29 @@ const v_redirect_out = {
     template: "<div></div>",
     created:function(){
         var id = this.$route.params.id;
-        var page = store.getters.page(id);
-
+        var page = store.getters.page(id); 
+        
         if(!page){
             return this.$router.push("/");
         }
 
         if(page.link){
-            var win = window.open(page.link, '_blank');
-            win.focus();
+            window.location.href = page.link;
         }else{
             this.$router.push("/page/"+id);
         }
     }
 };
 
-const router = new VueRouter({routes:[{
-    path: "/landing",
+const router = new VueRouter({routes:[{ 
+    path: "/landing", 
     component: v_redirect_landing
-},{
-    path: "/login",
+},{ 
+    path: "/login", 
     component: v_redirect_login
-},{
-    path: "/user",
-    component: v_Wrapper,
+},{ 
+    path: "/user", 
+    component: v_Wrapper, 
     children: [{ path: "", component: v_User }]
 },{
     path: "/page/:id",
@@ -82,8 +81,8 @@ const router = new VueRouter({routes:[{
 },{
     path: "/website/:id",
     component: v_redirect_out
-},{
-    path: "*",
+},{ 
+    path: "*", 
     component: v_redirect("/")
 }]});
 
