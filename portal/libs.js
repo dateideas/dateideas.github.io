@@ -55,4 +55,3 @@ function loadDisqus(page_id){
     s.setAttribute("date-timestamp", +new Date());
     (d.head || d.body).appendChild(s);
 }
-

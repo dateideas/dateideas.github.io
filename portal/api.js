@@ -62,4 +62,3 @@ var api = {
         // api.base = "//"+window.location.host.split(':')[0]+":8080";
     }
 })();
-

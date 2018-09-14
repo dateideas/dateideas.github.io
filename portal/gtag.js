@@ -3,7 +3,7 @@ const fbUrl = "https://dateideaslogging.firebaseio.com/events.json";
 
 function gtag(){
   const args = arguments;
-  // dataLayer.push(args);
+  window.dataLayer.push(args);
 
   function setData(data){
     Object.keys(data).forEach((key) => {
@@ -42,4 +42,3 @@ function gtag(){
     }
   }
 }
-

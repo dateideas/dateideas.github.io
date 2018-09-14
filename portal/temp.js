@@ -45,4 +45,3 @@ Vue.component("temp_ticket", {
         });
     }
 });
-

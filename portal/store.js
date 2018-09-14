@@ -179,4 +179,3 @@ const store = new Vuex.Store({
         store.dispatch("updateUser", window.localStorage);
     }
 })();
-
