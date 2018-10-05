@@ -137,10 +137,11 @@ const store = new Vuex.Store({
                 store.commit("setPage", data);
             });
         },
-        getList: function(store){
+        getList: function(store, preview=false){
             store.dispatch("getSaves");
 
-            api.getList(function(data){
+            func = preview ? api.getList : api.getPreview;
+            func(function(data){
                 if(data.ok){
                     store.commit("setList", data.latest);
                     store.commit("setPages", data.pages);

@@ -3,7 +3,10 @@ var api = {
     send: function(api, func, handle_err){
         var xhr = new XMLHttpRequest();
         xhr.open("GET", this.base+api);
-        xhr.setRequestHeader("Authorization", "Bearer "+store.state.user._tkn);
+
+        if(window.store){
+            xhr.setRequestHeader("Authorization", "Bearer "+store.state.user._tkn);
+        }
 
         xhr.onerror = function(){
             if(!handle_err){
@@ -23,7 +26,9 @@ var api = {
                     func(obj);
                 }
 
-                store.commit("setLoading", false);
+                if(window.store){
+                  store.commit("setLoading", false);
+                }
             }
         };
         xhr.send();
