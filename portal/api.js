@@ -4,7 +4,7 @@ var api = {
         var xhr = new XMLHttpRequest();
         xhr.open("GET", this.base+api);
 
-        if(window.store){
+        if(typeof store != "undefined"){
             xhr.setRequestHeader("Authorization", "Bearer "+store.state.user._tkn);
         }
 
