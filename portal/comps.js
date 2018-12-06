@@ -102,7 +102,7 @@ const v_User = {
                         alert(msg);
                     }else{
                         alert("all done :)");
-                        this.$router.push("/");
+                        comp.$router.push("/");
                         comp.sms = 0;
                     }
 
