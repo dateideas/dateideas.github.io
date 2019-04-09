@@ -8,7 +8,8 @@ comps['v-list'].data = function () {
 comps['v-list'].created = function () {
   window.addEventListener('scroll', this.hideAutocomplete);
 };
-comps['v-list'].computed = Vuex.mapState(['list', 'list_more', 'loading', 'searchAutoComplete']);
+comps['v-list'].computed = Vuex.mapState(['list', 'list_more', 'loading', 'searchAutoComplete',
+  'searchAllLocations']);
 comps['v-list'].methods = {
   authenticated() {
     return !!store.state.user;
@@ -18,6 +19,7 @@ comps['v-list'].methods = {
   },
 
   hideAutocomplete() {
+    event.stopPropagation();
     this.auto_comp_open = false;
     this.searchTerm = '';
     let search = document.getElementById('search');
@@ -28,6 +30,7 @@ comps['v-list'].methods = {
     this.$router.app.$emit('search', term);
   },
   onClick() {
+    event.stopPropagation();
     this.auto_comp_open = !this.auto_comp_open;
     store.dispatch('setAutocomplete', []);
     this.searchTerm = '';
@@ -39,9 +42,12 @@ comps['v-list'].methods = {
     if (this.searchTerm) {
       document.getElementById('search').className = 'hero__search__input--open';
       this.auto_comp_open = true;
+      this.$router.app.$emit('type', this.searchTerm);
+      /*
       api.searchGetAutoComp(this.searchTerm,
         msg => store.dispatch('setAutocomplete', msg.split(/\r?\n/)),
         err => alert(err.message));
+        */
     } else {
       document.getElementById('search').className = 'hero__search__input';
       this.auto_comp_open = false;

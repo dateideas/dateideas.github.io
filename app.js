@@ -29,6 +29,15 @@ window.app = new Vue({
         }
       } else store.dispatch('searchLocationTerm', term);
     });
+    this.$on('type', (searchTerm) => {
+      store.dispatch('setAutocomplete', []);
+      store.state.searchAllLocations.forEach((loc) => {
+        if (loc.substr(0, searchTerm.length)
+          .toUpperCase() === searchTerm.toUpperCase()) {
+          store.state.searchAutoComplete = store.state.searchAutoComplete.concat(loc);
+        }
+      });
+    });
   },
 
   data: {
@@ -43,7 +52,8 @@ window.app = new Vue({
   computed: {
     name: () => store.state.user.name,
     picture: () => store.state.user.picture,
-    ...Vuex.mapState(['authenticated', 'showVerifyBox', 'loading', 'loadingText', 'searchAutoComplete']),
+    ...Vuex.mapState(['authenticated', 'showVerifyBox', 'loading', 'loadingText',
+      'searchAutoComplete', 'searchAllLocations']),
   },
 
   methods: {
@@ -55,10 +65,11 @@ window.app = new Vue({
     },
 
     hideAutocomplete() {
+      event.stopPropagation();
       this.auto_comp_open = false;
       this.searchTerm = '';
-      let search = document.getElementById('search');
-      let searchMobile = document.getElementById('search_mobile');
+      const search = document.getElementById('search');
+      const searchMobile = document.getElementById('search_mobile');
       search.className = 'hero__search__input';
       searchMobile.className = '';
       search.blur();
@@ -72,24 +83,34 @@ window.app = new Vue({
         : this.isSearchShown = true;
     },
     onClick() {
+      event.stopPropagation();
       this.auto_comp_open = !this.auto_comp_open;
       store.dispatch('setAutocomplete', []);
       this.searchTerm = '';
+      const search = document.getElementById('search');
+      const searchMobile = document.getElementById('search_mobile');
       if (this.auto_comp_open) {
-        document.getElementById('search').className = 'hero__search__input--open';
-        document.getElementById('search_mobile').className = 'header__search--open';
+        search.className = 'hero__search__input--open';
+        searchMobile.className = 'header__search--open';
+        search.focus();
+        searchMobile.focus();
       } else {
-        document.getElementById('search').className = 'hero__search__input';
-        document.getElementById('search_mobile').className = '';
+        search.className = 'hero__search__input';
+        searchMobile.className = '';
+        search.blur();
+        searchMobile.blur();
       }
     },
     onType() {
       if (this.searchTerm) {
         document.getElementById('search').className = 'hero__search__input--open';
         this.auto_comp_open = true;
+        this.$router.app.$emit('type', this.searchTerm);
+        /*
         api.searchGetAutoComp(this.searchTerm,
           msg => store.dispatch('setAutocomplete', msg.split(/\r?\n/)),
           err => alert(err.message));
+          */
       } else {
         document.getElementById('search').className = 'hero__search__input';
         this.auto_comp_open = false;
