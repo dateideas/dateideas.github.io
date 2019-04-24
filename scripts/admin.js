@@ -136,7 +136,9 @@ window.admin = new Vue({
     },
 
     newLocation() {
-      this.locs.push({ lon: '', lat: '', text: '' });
+      this.locs.push({
+        lon: '', lat: '', url: '', text: '',
+      });
     },
 
     removeLocation() {

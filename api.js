@@ -111,11 +111,11 @@ const api = {
   // admin update dideas details //
   addLocation(id, loc, func, err) {
     this.send(`/location/add?id=${id}&lon=${loc.lon}&lat=${
-      loc.lat}&text=${encodeURIComponent(loc.text)}`, func, err);
+      loc.lat}&url=${loc.url}&text=${encodeURIComponent(loc.text)}`, func, err);
   },
   editLocation(loc, func, err) {
     this.send(`/location/edit?lid=${loc.lid}&lon=${loc.lon}&lat=${
-      loc.lat}&text=${encodeURIComponent(loc.text)}`, func, err);
+      loc.lat}&url=${loc.url}&text=${encodeURIComponent(loc.text)}`, func, err);
   },
   removeLocation(lid, func, err) {
     this.send(`/location/rm?lid=${lid}`, func, err);
