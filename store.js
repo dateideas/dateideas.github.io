@@ -29,11 +29,8 @@ const store = new Vuex.Store({
       'Bedok North', 'Bedok Reservoir', 'Tampines West', 'Tampines East', 'Upper Changi', 'Sentosa'],
     search: [],
     searchAutoComplete: [],
-    searchTerm: '',
 
-    authenticated: false,
-    verified: true,
-    showVerifyBox: false,
+    authenticated: false
   },
   getters: {
     page: state => id => state.pages[id],
@@ -48,6 +45,8 @@ const store = new Vuex.Store({
     setUser(state, user) {
       state.user = user;
       state.authenticated = !!user;
+
+      ga('set', 'userId', user.sub);
       return user
         ? localStorage.setItem('user', JSON.stringify(user))
         : localStorage.removeItem('user');
@@ -83,13 +82,6 @@ const store = new Vuex.Store({
     setAutocomplete(state, results) {
       state.searchAutoComplete = results;
     },
-
-    setVerified(state, bool) {
-      state.verified = bool;
-    },
-    setVerifyBox(state, bool) {
-      state.showVerifyBox = bool;
-    },
   },
   actions: {
     setUser(store, item) {
@@ -100,14 +92,6 @@ const store = new Vuex.Store({
         : api.login(atkn, (res) => {
           store.commit('setDideasTkn', res.body);
           store.dispatch('getList');
-          /* Uncomment to enable sms verification
-          api.isVerified((res) => {
-            if (!res.body) {
-              store.commit('setVerifyBox',
-                confirm('Account not verified, some features unavailable. Verify account?'));
-            }
-            store.commit('setVerified', res.body);
-          }); */
         });
     },
     clearUser(store) {
@@ -117,24 +101,9 @@ const store = new Vuex.Store({
     },
     reLogin(store, tkn) {
       store.commit('setDideasTkn', tkn);
-      // store.dispatch('verifyUser');
     },
     setLoading(store, loader) {
       store.commit('setLoading', loader);
-    },
-
-    setVerifyBox(store, bool) {
-      store.commit('setVerifyBox', bool);
-    },
-    verifyUser(store) {
-      api.isVerified((msg) => {
-        if (!msg.body) {
-          store.commit('setVerifyBox',
-            confirm('Account not verified, some features unavailable. Verify account?'));
-        }
-        store.commit('setVerified', msg.body);
-        store.dispatch('getList');
-      });
     },
 
     getList(store) {

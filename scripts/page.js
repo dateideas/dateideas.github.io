@@ -1,4 +1,4 @@
-const page = new Vue({
+window.page = new Vue({
   el: '#v-page',
   data: {
     id: '',
@@ -10,7 +10,7 @@ const page = new Vue({
       return p || false;
     },
     savable() {
-      return store.state.authenticated && store.state.verified;
+      return store.state.authenticated;
     },
   },
 

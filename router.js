@@ -35,9 +35,8 @@ const router = new VueRouter({
 });
 
 router.afterEach((to, from) => {
-  /*
-  gtag("set", {"page_path": to.fullPath});
-  gtag("event", "page_view"); */
+  sendGa(to.fullPath);
+
   toggleMenu(false);
   autoNav(to.path);
   window.scrollTo(0, 0);

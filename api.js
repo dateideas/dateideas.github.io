@@ -35,23 +35,6 @@ const api = {
     xhr.send(JSON.stringify(body));
   },
 
-  // sms //
-  isVerified(func) {
-    this.send('/user/activated', func);
-  },
-  isNumValid(num, func, err) {
-    this.send(`/user/valid?num=${num}`, func, err);
-  },
-  sendSms(num, func, err) {
-    this.send(`/user/sms1?num=${num}`, func, err);
-  },
-  resendSms(func, err) {
-    this.send('/user/sms1', func, err);
-  },
-  sendCode(code, func, err) {
-    this.send(`/user/sms2?code=${code}`, func, err);
-  },
-
   // dideas //
   getList(func, err) {
     this.send('/list', func, err);
@@ -68,6 +51,7 @@ const api = {
     this.send('/saves', func, err);
   },
   setSave(state, pid, func, err) {
+    sendGa(`/action/save/${pid}/${state}`);
     this.send(`/save?state=${state}&pid=${pid}`, func, err);
   },
 

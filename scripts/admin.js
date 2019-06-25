@@ -1,3 +1,7 @@
+/* eslint no-alert:0 */
+/* eslint no-param-reassign:1 */
+/* eslint no-restricted-globals:0 */
+
 window.admin = new Vue({
   el: '#v-admin',
 
@@ -81,7 +85,7 @@ window.admin = new Vue({
       this.getDrafts();
       this.getList();
       this.getVersion();
-    }, err => alert('not an admin'));
+    }, () => alert('not an admin'));
   },
 
   methods: {
@@ -89,9 +93,9 @@ window.admin = new Vue({
     getDrafts() { api.getDrafts((msg) => { this.drafts = msg.body; }); },
     getVersion() { api.getVersion((msg) => { this.version = msg.body; }); },
     updatePages() {
-      confirm('This is an intensive backend operation, only proceed after adding/editing all the necessary ideas')
-        ? api.updatePages(() => {}, err => alert(err.body))
-        : () => {};
+      if (confirm('This is an intensive backend operation, only proceed after adding/editing all the necessary ideas')) {
+        api.updatePages(() => {}, err => alert(err.body));
+      }
     },
 
     showNew() {
@@ -143,17 +147,15 @@ window.admin = new Vue({
 
     removeLocation() {
       const removed = this.locs.pop();
-      removed.lid
-        ? this.locsrm.push(removed)
-        : () => {};
+      if (removed.lid) {
+        this.locsrm.push(removed);
+      }
     },
 
     updateLocations() {
-      this.locs.forEach((location) => {
-        location.lid
-          ? api.editLocation(location, () => {}, msg => alert(msg.body))
-          : api.addLocation(this.details.id, location, () => {}, msg => alert(msg.body));
-      });
+      this.locs.forEach(location => (location.lid
+        ? api.editLocation(location, () => {}, msg => alert(msg.body))
+        : api.addLocation(this.details.id, location, () => {}, msg => alert(msg.body))));
       this.locsrm.forEach((location) => {
         api.removeLocation(location.lid, () => {}, msg => alert(msg.body));
       });
@@ -161,13 +163,16 @@ window.admin = new Vue({
 
     save(callback) {
       return api.putDetails(() => {
-        const func = callback
-          ? callback()
-          : this.state === 'edit'
-            ? this.getList()
-            : this.getDrafts();
         this.updateLocations();
         this.state = '';
+
+        if (callback) {
+          callback();
+        } else {
+          const func = this.state === 'edit'
+            ? this.getList : this.getDrafts;
+          func();
+        }
       }, msg => alert(msg.body), this.details, (this.state !== 'new'));
     },
 
@@ -179,7 +184,6 @@ window.admin = new Vue({
     },
 
     deleteIdea(idea) {
-      event.stopPropagation();
       return confirm(`Delete ${idea ? idea.title : this.details.title}?`)
         ? api.deleteIdea(idea ? idea.id : this.details.id, () => {
           this.getList();

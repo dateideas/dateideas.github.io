@@ -2,15 +2,32 @@ if (!window.router) {
   window.router = new VueRouter();
 }
 
+function hideElement(ele) {
+  if (ele) {
+    ele.className = 'hero__search__input';
+    ele.blur();
+  }
+}
+
+function showElement(ele) {
+  if (ele) {
+    ele.className = 'hero__search__input--open';
+    ele.focus();
+  }
+}
+
 window.app = new Vue({
   el: '#app',
   store,
   router,
 
   created() {
-    window.addEventListener('scroll', this.searchHidden);
-    window.addEventListener('scroll', this.hideAutocomplete);
-    window.addEventListener('popstate', this.searchHidden);
+    window.addEventListener('scroll', () => {
+      this.$emit('searchHidden');
+      this.$emit('hideSearchAutocomplete');
+    });
+    window.addEventListener('popstate', () => this.$emit('searchHidden'));
+
     this.$on('search', (term) => {
       store.dispatch('setLoading',
         {
@@ -29,31 +46,61 @@ window.app = new Vue({
         }
       } else store.dispatch('searchLocationTerm', term);
     });
-    this.$on('type', (searchTerm) => {
+
+    this.$on('searchType', (searchTerm) => {
+      this.searchTerm = searchTerm;
+
+      if (searchTerm) {
+        $('search').className = 'hero__search__input--open';
+        this.searchAutocompleteOpen = true;
+
+        store.dispatch('setAutocomplete', []);
+        store.state.searchAllLocations
+          .map((loc) => [loc.substr(0, searchTerm.length).toUpperCase(), loc])
+          .filter((loc) => loc[0] === searchTerm.toUpperCase())
+          .forEach((loc) => {
+            store.state.searchAutoComplete = store.state.searchAutoComplete.concat(loc[1]);
+          });
+      } else {
+        $('search').className = 'hero__search__input';
+        this.searchAutocompleteOpen = false;
+      }
+    });
+
+    this.$on('searchClick', () => {
+      this.searchTerm = '';
+      this.searchAutocompleteOpen = !this.searchAutocompleteOpen;
       store.dispatch('setAutocomplete', []);
-      store.state.searchAllLocations.forEach((loc) => {
-        if (loc.substr(0, searchTerm.length)
-          .toUpperCase() === searchTerm.toUpperCase()) {
-          store.state.searchAutoComplete = store.state.searchAutoComplete.concat(loc);
-        }
-      });
+
+      if (this.searchAutocompleteOpen) {
+        showElement($('search'));
+        showElement($('search_mobile'));
+      } else {
+        hideElement($('search'));
+        hideElement($('search_mobile'));
+      }
+    });
+
+    this.$on('hideSearchAutocomplete', () => {
+      this.searchAutocompleteOpen = false;
+      this.searchTerm = '';
+      hideElement($('search'));
+      hideElement($('search_mobile'));
     });
   },
 
   data: {
     isSearchShown: false,
-    sms_num: '',
-    sms_code: '',
-    sms_usercode: '',
     searchTerm: '',
-    auto_comp_open: false,
+    searchAutocompleteOpen: false
   },
 
   computed: {
     name: () => store.state.user.name,
     picture: () => store.state.user.picture,
-    ...Vuex.mapState(['authenticated', 'showVerifyBox', 'loading', 'loadingText',
-      'searchAutoComplete', 'searchAllLocations']),
+    ...Vuex.mapState(['authenticated',
+        'showVerifyBox', 'loading', 'loadingText',
+        'searchAutoComplete']),
   },
 
   methods: {
@@ -64,87 +111,12 @@ window.app = new Vue({
       router.push('/profile');
     },
 
-    hideAutocomplete() {
-      event.stopPropagation();
-      this.auto_comp_open = false;
-      this.searchTerm = '';
-      const search = document.getElementById('search');
-      const searchMobile = document.getElementById('search_mobile');
-      search.className = 'hero__search__input';
-      searchMobile.className = '';
-      search.blur();
-      searchMobile.blur();
-    },
     searchHidden() {
       // To show nav search bar only when scrolled down
-      this.hideAutocomplete();
+      this.$emit('hideSearchAutocomplete');
       router.currentRoute.path === '/'
         ? this.isSearchShown = window.scrollY > (0.5 * window.innerHeight)
         : this.isSearchShown = true;
-    },
-    onClick() {
-      event.stopPropagation();
-      this.auto_comp_open = !this.auto_comp_open;
-      store.dispatch('setAutocomplete', []);
-      this.searchTerm = '';
-      const search = document.getElementById('search');
-      const searchMobile = document.getElementById('search_mobile');
-      if (this.auto_comp_open) {
-        search.className = 'hero__search__input--open';
-        searchMobile.className = 'header__search--open';
-        search.focus();
-        searchMobile.focus();
-      } else {
-        search.className = 'hero__search__input';
-        searchMobile.className = '';
-        search.blur();
-        searchMobile.blur();
-      }
-    },
-    onType() {
-      if (this.searchTerm) {
-        document.getElementById('search').className = 'hero__search__input--open';
-        this.auto_comp_open = true;
-        this.$router.app.$emit('type', this.searchTerm);
-        /*
-        api.searchGetAutoComp(this.searchTerm,
-          msg => store.dispatch('setAutocomplete', msg.split(/\r?\n/)),
-          err => alert(err.message));
-          */
-      } else {
-        document.getElementById('search').className = 'hero__search__input';
-        this.auto_comp_open = false;
-      }
-    },
-
-    hideVerifyBox: () => {
-      store.dispatch('setVerifyBox', false);
-    },
-    verifyNumber() {
-      api.isNumValid(this.sms_num, (msg) => {
-        msg.body
-          ? api.sendSms(this.sms_num, (msg) => {
-            this.sms_code = msg.body;
-          }, msg => alert(msg.body))
-          : alert('invalid number!');
-      }, msg => alert(msg.body));
-    },
-    verifyCode() {
-      api.sendCode(this.sms_code + this.sms_usercode, (msg) => {
-        location.reload();
-        alert('Account successfully verified!');
-      }, msg => alert(msg.body));
-    },
-    resendCode() {
-      api.resendSms((msg) => {
-        this.sms_code = msg.body;
-      }, msg => alert(msg.body));
-    },
-  },
-
-  destroyed() {
-    window.removeEventListener('scroll', this.searchHidden);
-    window.removeEventListener('popstate', this.searchHidden);
-    window.removeEventListener('scroll', this.hideAutocomplete);
+    }
   },
 });
