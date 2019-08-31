@@ -46,10 +46,12 @@ const store = new Vuex.Store({
       state.user = user;
       state.authenticated = !!user;
 
-      ga('set', 'userId', user.sub);
-      return user
-        ? localStorage.setItem('user', JSON.stringify(user))
-        : localStorage.removeItem('user');
+      if (user) {
+        ga.uid = user.sub;
+        localStorage.setItem('user', JSON.stringify(user));
+      } else {
+        localStorage.removeItem('user');
+      }
     },
     setLoading(state, loader) {
       state.loading = loader.bool;

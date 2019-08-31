@@ -45,11 +45,33 @@ comps = {
   },
 };
 
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-ga('create', 'UA-93698015-3', 'auto');
+const ga = {
+  'v': '1',
+  't': 'pageview',
+  'tid': 'UA-93698015-3'
+};
 
 function sendGa(url) {
-  ga('set', 'page', url);
-  ga('send', 'pageview');
+  let req = 'https://www.google-analytics.com/collect?';
+
+  Object.keys(ga).forEach(key => {
+    req += `${key}=${encodeURIComponent(ga[key])}&`
+  });
+  req += `dp=${encodeURIComponent(url)}`;
+
+  // NOTE: backup in case adblocks
+  let req2 = `//gproxy.glitch.me/go?tid=${ga.tid}&q=${encodeURIComponent(req)}`;
+
+  if (window.fetch) {
+    fetch(req).catch(() => fetch(req2));
+  } else {
+    let xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = () => {
+      if (xhr.readyState == 4 && xhr.status != 200) {
+        let xhr2 = new XMLHttpRequest();
+        xhr2.open(req2); xhr2.send();
+      }
+    };
+    xhr.open('GET', req); xhr.send();
+  }
 }
