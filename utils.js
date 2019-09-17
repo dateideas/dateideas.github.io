@@ -53,6 +53,7 @@ const ga = {
 
 function sendGa(url) {
   let req = 'https://www.google-analytics.com/collect?';
+  ga['cid'] = ga['uid'];
 
   Object.keys(ga).forEach(key => {
     req += `${key}=${encodeURIComponent(ga[key])}&`
@@ -75,3 +76,12 @@ function sendGa(url) {
     xhr.open('GET', req); xhr.send();
   }
 }
+
+document.onload = () => {
+  [].slice.call(document.querySelectorAll('#v-page a'))
+    .forEach(x => {
+      x.onclick = () => sendGa(x.href);
+    });
+
+  sendGa(window.location.pathname);
+};

@@ -105,7 +105,7 @@ window.app = new Vue({
 
   methods: {
     goHome: () => {
-      router.push('/');
+      window.location.assign('https://www.dateideassg.com/');
     },
     goProfile: () => {
       router.push('/profile');

@@ -44,10 +44,11 @@ const store = new Vuex.Store({
     },
     setUser(state, user) {
       state.user = user;
-      state.authenticated = !!user;
+      state.authenticated = false;
 
       if (user) {
         ga.uid = user.sub;
+        state.authenticated = true;
         localStorage.setItem('user', JSON.stringify(user));
       } else {
         localStorage.removeItem('user');
@@ -166,7 +167,7 @@ const store = new Vuex.Store({
           router.push('/search');
         },
         () => {
-          alert('Please Login!');
+          alert('Login by clicking onto the Menu button to search for ideas in a specific location!');
           store.dispatch('setLoading', { bool: false, text: '' });
         });
     },
@@ -179,7 +180,7 @@ const store = new Vuex.Store({
           router.push('/search');
         },
         () => {
-          alert('Please Login!');
+          alert('Login by clicking onto the Menu button to search for ideas in a specific location!');
           store.dispatch('setLoading', { bool: false, text: '' });
         });
     },
