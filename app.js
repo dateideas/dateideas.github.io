@@ -29,22 +29,24 @@ window.app = new Vue({
     window.addEventListener('popstate', () => this.$emit('searchHidden'));
 
     this.$on('search', (term) => {
-      store.dispatch('setLoading',
-        {
-          bool: true,
-          text: `searching for ideas near ${term ? term : 'your area'}`,
-        });
-      if (!term) {
+      store.dispatch('setLoading', {
+        bool: true,
+        text: `searching for ideas near ${term ? term : 'your area'}`,
+      });
+      
+      if (term) {
+        store.dispatch('searchLocationTerm', term);
+      } else {
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(pos => {
-            let lon = pos.coords.longitude;
-            let lat = pos.coords.latitude;
-            store.dispatch('searchLocation', { lon, lat });
+            store.dispatch('searchLocation', { 
+              pos.coords.longitude,
+              pos.coords.latitude});
           });
         } else {
           alert('unable to get GPS location');
         }
-      } else store.dispatch('searchLocationTerm', term);
+      }
     });
 
     this.$on('searchType', (searchTerm) => {
@@ -90,8 +92,8 @@ window.app = new Vue({
   },
 
   data: {
-    isSearchShown: false,
     searchTerm: '',
+    isSearchShown: false,
     searchAutocompleteOpen: false
   },
 
@@ -107,6 +109,7 @@ window.app = new Vue({
     goHome: () => {
       window.location.assign('https://www.dateideassg.com/');
     },
+    
     goProfile: () => {
       router.push('/profile');
     },
