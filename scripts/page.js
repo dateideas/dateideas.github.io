@@ -24,3 +24,5 @@ window.page = new Vue({
     },
   },
 });
+
+sendGa(window.location.pathname);
