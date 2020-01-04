@@ -7,6 +7,7 @@ const store = new Vuex.Store({
 
     list: [],
     list_more: [],
+    lists: {},
     pages: {},
     saves: {},
 
@@ -75,6 +76,11 @@ const store = new Vuex.Store({
     updateListMore(state, list) {
       state.list_more = state.list_more.concat(list);
     },
+    updateListType(state, data) {
+      const [ dtype, list ] = data;
+      state.lists[dtype] = !state.lists[dtype] ? list
+        : state.lists[dtype].concat(list);
+    },
 
     setSearch(state, results) {
       state.search = results;
@@ -131,6 +137,11 @@ const store = new Vuex.Store({
           ? alert('Unable to load ideas. Please log out and try again.')
           : api.getMore(store.state.list.slice(-1)[0].published, func)
         : api.getMore(store.state.list_more.slice(-1)[0].published, func);
+    },
+    getListType(store, dtype) {
+      api.getListType(dtype, 15, (data) => {
+        store.commit('updateListType', [dtype, data.body]);
+      });
     },
 
     // --- saves implemented for responsive purposes
@@ -192,6 +203,10 @@ const store = new Vuex.Store({
 
 (function () {
   store.dispatch('getList');
+
+  store.dispatch('getListType', 'exp');
+  store.dispatch('getListType', 'enj');
+
   const dtkn = localStorage.getItem('accessToken');
   const user = JSON.parse(localStorage.getItem('user'));
 

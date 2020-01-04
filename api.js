@@ -42,6 +42,9 @@ const api = {
   getMore(time, func) {
     this.send(`/list?next=${time}`, func);
   },
+  getListType(dtype, count, func) {
+    this.send(`/list?dtype=${dtype}&count=${count}`, func);
+  },
 
   // saves //
   getSaved(pid, func) {

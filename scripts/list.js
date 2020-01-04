@@ -6,7 +6,7 @@ comps.update('v-list', {
       searchAutocompleteOpen: false,
     };
   },
-  computed: Vuex.mapState(['list', 'list_more', 'loading', 'searchAutoComplete']),
+  computed: Vuex.mapState(['list', 'list_more', 'lists', 'loading', 'searchAutoComplete']),
   created() {
     window.addEventListener('scroll', () => app.$emit('hideSearchAutocomplete'));
 
