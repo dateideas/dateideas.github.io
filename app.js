@@ -3,16 +3,20 @@ if (!window.router) {
 }
 
 function hideElement(ele) {
-  if (ele) {
-    ele.className = 'hero__search__input';
-    ele.blur();
+  if (ele && ele.length > 0) {
+    ele.forEach(e => {
+      e.className = e.className.split('--')[0];
+      e.blur();
+    });
   }
 }
 
 function showElement(ele) {
-  if (ele) {
-    ele.className = 'hero__search__input--open';
-    ele.focus();
+  if (ele && ele.length > 0) {
+    ele.forEach(e => {
+      e.className = `${e.className}--open`;
+      e.focus();
+    });
   }
 }
 
@@ -24,7 +28,6 @@ window.app = new Vue({
   created() {
     window.addEventListener('scroll', () => {
       this.$emit('searchHidden');
-      this.$emit('hideSearchAutocomplete');
     });
     window.addEventListener('popstate', () => this.$emit('searchHidden'));
 
@@ -51,9 +54,6 @@ window.app = new Vue({
       this.searchTerm = searchTerm;
 
       if (searchTerm) {
-        $('search').className = 'hero__search__input--open';
-        this.searchAutocompleteOpen = true;
-
         store.dispatch('setAutocomplete', []);
         store.state.searchAllLocations
           .map((loc) => [loc.substr(0, searchTerm.length).toUpperCase(), loc])
@@ -61,38 +61,32 @@ window.app = new Vue({
           .forEach((loc) => {
             store.state.searchAutoComplete = store.state.searchAutoComplete.concat(loc[1]);
           });
-      } else {
-        $('search').className = 'hero__search__input';
-        this.searchAutocompleteOpen = false;
       }
     });
 
     this.$on('searchClick', () => {
       this.searchTerm = '';
-      this.searchAutocompleteOpen = !this.searchAutocompleteOpen;
       store.dispatch('setAutocomplete', []);
 
-      if (this.searchAutocompleteOpen) {
-        showElement($('search'));
-        showElement($('search_mobile'));
+      if ($$('autocomplete-items').length > 0) {
+        showElement($$('hero__search__input'));
+        showElement($$('autocomplete-items'));
       } else {
-        hideElement($('search'));
-        hideElement($('search_mobile'));
+        hideElement($$('hero__search__input--open'));
+        hideElement($$('autocomplete-items--open'));
       }
     });
 
     this.$on('hideSearchAutocomplete', () => {
-      this.searchAutocompleteOpen = false;
       this.searchTerm = '';
-      hideElement($('search'));
-      hideElement($('search_mobile'));
+      hideElement($$('hero__search__input--open'));
+      hideElement($$('autocomplete-items--open'));
     });
   },
 
   data: {
     isSearchShown: false,
-    searchTerm: '',
-    searchAutocompleteOpen: false
+    searchTerm: ''
   },
 
   computed: {

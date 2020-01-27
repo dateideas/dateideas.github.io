@@ -117,8 +117,7 @@ const store = new Vuex.Store({
 
     getList(store) {
       api.getList((data) => {
-        store.commit('setList', data.body);
-        store.commit('setListMore', []);
+        store.commit('setListMore', data.body);
         store.dispatch('getListMore');
         if (store.state.authenticated) {
           store.dispatch('checkSaved');
@@ -204,6 +203,7 @@ const store = new Vuex.Store({
 (function () {
   store.dispatch('getList');
 
+  store.dispatch('getListType', 'eat');
   store.dispatch('getListType', 'exp');
   store.dispatch('getListType', 'enj');
 

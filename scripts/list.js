@@ -3,25 +3,27 @@ comps.update('v-list', {
   data() {
     return {
       searchTerm: '',
-      searchAutocompleteOpen: false,
     };
   },
   computed: Vuex.mapState(['list', 'list_more', 'lists', 'loading', 'searchAutoComplete']),
   created() {
-    window.addEventListener('scroll', () => app.$emit('hideSearchAutocomplete'));
-
     this.$on('searchType', (searchTerm) => {
-      this.searchAutocompleteOpen = searchTerm.length > 0;
-
-      if (this.searchAutocompleteOpen) {
+      if (searchTerm.length > 0) {
         app.$emit('searchType', searchTerm);
       }
     });
 
     this.$on('searchClick', () => {
       this.searchTerm = '';
-      this.searchAutocompleteOpen = !this.searchAutocompleteOpen;
-      app.$emit('searchClick');
+      store.dispatch('setAutocomplete', []);
+
+      if ($$('autocomplete-items').length > 0) {
+        showElement($$('hero__search__input'));
+        showElement($$('autocomplete-items'));
+      } else {
+        hideElement($$('hero__search__input--open'));
+        hideElement($$('autocomplete-items--open'));
+      }
     });
   },
 

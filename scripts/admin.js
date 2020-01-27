@@ -23,6 +23,7 @@ window.admin = new Vue({
       shopping: ['clothes', 'beauty', 'gifts'],
       photos: ['nature', 'decoration', 'exhibition'],
     },
+    dtype: ['eat', 'enj', 'exp'],
 
     sample: {
       id: 'example-id',
@@ -72,6 +73,8 @@ window.admin = new Vue({
       place: '',
       time: '',
       info: '',
+
+      dtype: '',
     },
 
     adetails: undefined,
@@ -118,6 +121,8 @@ window.admin = new Vue({
         place: '',
         time: '',
         info: '',
+
+        dtype: '',
       };
       this.locs = [];
     },
