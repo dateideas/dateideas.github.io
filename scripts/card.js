@@ -14,7 +14,7 @@ comps.update('v-card', {
   },
   methods: {
     visitPage() {
-      window.location.assign(`//dateideas.github.io/pages/${this.page.id}`);
+      window.location.assign(`//dateideas.github.io/pages/${this.page.id}/`);
     },
 
     save(event) {
